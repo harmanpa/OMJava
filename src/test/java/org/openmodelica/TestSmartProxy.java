@@ -1,17 +1,9 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openmodelica.ModelicaArray;
-import org.openmodelica.ModelicaBoolean;
-import org.openmodelica.ModelicaInteger;
-import org.openmodelica.ModelicaObject;
-import org.openmodelica.ModelicaReal;
-import org.openmodelica.ModelicaRecord;
-import org.openmodelica.ModelicaString;
-import org.openmodelica.ModelicaTuple;
 import org.openmodelica.corba.ConnectException;
 import org.openmodelica.corba.SmartProxy;
 import org.openmodelica.corba.parser.*;
@@ -24,7 +16,7 @@ public class TestSmartProxy {
   @BeforeClass
   public static void initClass() throws ConnectException, ParseException {
     proxy = new SmartProxy("junit", "Modelica", true, true);
-    proxy.sendExpression("cd(\""+System.getProperty("user.dir").replace("\\", "/")+"/test_files\")");
+    proxy.sendExpression("cd(\""+System.getProperty("user.dir").replace("\\", "/")+"/src/test/resources\")");
     if (true != proxy.sendModelicaExpression("loadFile(\"simple.mo\")", ModelicaBoolean.class).b)
       throw new ParseException("Failed to load file");
   }

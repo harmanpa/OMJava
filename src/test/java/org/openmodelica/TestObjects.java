@@ -1,14 +1,8 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.openmodelica.ModelicaAny;
-import org.openmodelica.ModelicaBoolean;
-import org.openmodelica.ModelicaInteger;
-import org.openmodelica.ModelicaObject;
-import org.openmodelica.ModelicaReal;
-import org.openmodelica.ModelicaString;
 
 public class TestObjects {
 

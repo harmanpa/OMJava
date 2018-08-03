@@ -1,4 +1,4 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,6 @@ import java.net.URLClassLoader;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openmodelica.*;
 import org.openmodelica.corba.parser.DefinitionsCreator;
 
 public class TestDefinitionsParser {
@@ -18,14 +17,15 @@ public class TestDefinitionsParser {
   public void test_Simple_mo() throws Exception {
     File jarFile = new File("test_files/simple.jar");
     jarFile.delete();
-    DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.program", new File(System.getProperty("user.dir")+"/test_files"), new String[]{"simple.mo"}, true);
+    DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.program", new File(System.getProperty("user.dir")+"/src/test/resources"), new String[]{"simple.mo"}, true);
   }
 
+  @Ignore
   @Test
   public void test_Simple_mo_classLoader() throws Exception {
     test_Simple_mo();
     // Works in Linux...
-    File jarFile = new File("test_files/simple.jar");
+    File jarFile = new File("src/test/resources/simple.jar");
     URLClassLoader cl = new URLClassLoader(new URL[]{new URL("jar:"+jarFile.toURI()+"!/")});
     for (URL url : cl.getURLs())
       System.out.println(url.toString());
@@ -35,16 +35,17 @@ public class TestDefinitionsParser {
     assertEquals("test.abc(a=1,b=2,c=3.0)", o.toString());
   }
 
+  @Ignore
   @Test
   public void test_meta_modelica_mo() throws Exception {
-    DefinitionsCreator.main("test_files/meta_modelica.jar", "org.openmodelica.metamodelicaprogram",
+    DefinitionsCreator.main("src/test/resources/meta_modelica.jar", "org.openmodelica.metamodelicaprogram",
         new File("test_files").getAbsolutePath(), "meta_modelica.mo");
   }
 
   @Ignore
   @Test
   public void test_OMC_Util_mo() throws Exception {
-    File jarFile = new File("test_files/OMC_Util.jar");
+    File jarFile = new File("src/test/resources/OMC_Util.jar");
     DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.OMC",
         new File("../../Compiler/").getAbsoluteFile(),
         new String[]{
@@ -53,6 +54,7 @@ public class TestDefinitionsParser {
       true);
   }
 
+  @Ignore
   @Test
   /**
    *  Absyn.mo contains things like "type XXX = tuple<YYY, ZZZ>;"
@@ -60,16 +62,17 @@ public class TestDefinitionsParser {
    *  However, Values.mo also pulls in this file
    */
   public void test_OMC_Absyn_mo() throws Exception  {
-    File jarFile = new File("test_files/OMC_Absyn.jar");
+    File jarFile = new File("src/test/resources/OMC_Absyn.jar");
     DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.OMC",
         new File("../../Compiler/").getAbsoluteFile(),
         new String[]{"FrontEnd/Absyn.mo"},
         true);
   }
 
+  @Ignore
   @Test
   public void test_OMC_Values_mo() throws Exception  {
-    File jarFile = new File("test_files/OMC_Values.jar");
+    File jarFile = new File("src/test/resources/OMC_Values.jar");
     DefinitionsCreator.createDefinitions(
         jarFile,
         "org.openmodelica.OMC",
@@ -83,7 +86,7 @@ public class TestDefinitionsParser {
   @Ignore
   @Test
   public void test_OMC_ClassInf_mo() throws Exception  {
-    File jarFile = new File("test_files/OMC_ClassInf.jar");
+    File jarFile = new File("src/test/resources/OMC_ClassInf.jar");
     DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.OMC",
         new File("../../Compiler/").getAbsoluteFile(),
         new String[]{
@@ -102,7 +105,7 @@ public class TestDefinitionsParser {
   @Ignore
   @Test
   public void test_OMC_mo_stripped() throws Exception {
-    File jarFile = new File("test_files/OMC_full_no_functions.jar");
+    File jarFile = new File("src/test/resources/OMC_full_no_functions.jar");
     File compilerDir = new File("../../Compiler/");
     String[] files = compilerDir.list(new MoFilter());
     DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.OMC",
@@ -116,7 +119,7 @@ public class TestDefinitionsParser {
   @Ignore
   @Test
   public void test_OMC_mo() throws Exception {
-    File jarFile = new File("test_files/OMC_full.jar");
+    File jarFile = new File("src/test/resources/OMC_full.jar");
     File compilerDir = new File("../../Compiler/");
     String[] files = compilerDir.list(new MoFilter());
     DefinitionsCreator.createDefinitions(jarFile, "org.openmodelica.OMC",

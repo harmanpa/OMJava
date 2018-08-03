@@ -1,15 +1,9 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
 
-import org.openmodelica.ModelicaInteger;
-import org.openmodelica.ModelicaObject;
-import org.openmodelica.ModelicaReal;
-import org.openmodelica.ModelicaRecord;
-import org.openmodelica.ModelicaRecordException;
-import org.openmodelica.SimpleTypeSpec;
 import org.openmodelica.corba.parser.ParseException;
 
 /* The class needs to be public and not a nested class because

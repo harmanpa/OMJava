@@ -1,4 +1,4 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import static org.junit.Assert.*;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.TreeMap;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openmodelica.*;
 
 public class TestRecord {
 

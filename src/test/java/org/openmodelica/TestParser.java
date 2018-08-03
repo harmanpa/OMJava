@@ -1,4 +1,4 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import static org.junit.Assert.*;
 import static org.openmodelica.corba.parser.OMCStringParser.parse;
@@ -6,16 +6,6 @@ import static org.openmodelica.corba.parser.OMCStringParser.parse;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.openmodelica.ModelicaArray;
-import org.openmodelica.ModelicaBoolean;
-import org.openmodelica.ModelicaInteger;
-import org.openmodelica.ModelicaObject;
-import org.openmodelica.ModelicaOption;
-import org.openmodelica.ModelicaReal;
-import org.openmodelica.ModelicaRecord;
-import org.openmodelica.ModelicaRecordException;
-import org.openmodelica.ModelicaString;
-import org.openmodelica.ModelicaTuple;
 import org.openmodelica.corba.parser.*;
 
 public class TestParser {
@@ -208,7 +198,7 @@ public class TestParser {
    ABC_UT expected = new abc(new ModelicaInteger(1),new ModelicaInteger(2),new ModelicaReal(3));
    String test = "record test.abc a=1, b=2, c=3.0 end test.abc;";
    ABC_UT res = parse(test, ABC_UT.class);
-   assertEquals("class org.openmodelica.test.abc",res.getClass().toString());
+   assertEquals("class org.openmodelica.abc",res.getClass().toString());
    assertEquals(expected.toString(), res.toString());
    assertEquals(expected, res);
    assertEquals(1, ((abc)res).get_a().i);

@@ -1,13 +1,9 @@
-package org.openmodelica.test;
+package org.openmodelica;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
 
-import org.openmodelica.ModelicaObject;
-import org.openmodelica.ModelicaRecord;
-import org.openmodelica.ModelicaRecordException;
-import org.openmodelica.SimpleTypeSpec;
 import org.openmodelica.corba.parser.ParseException;
 
 @SuppressWarnings("unchecked")
