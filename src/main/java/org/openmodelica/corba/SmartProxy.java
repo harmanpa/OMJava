@@ -25,8 +25,9 @@ public class SmartProxy extends OMCProxy {
   public <T extends ModelicaObject> T sendModelicaExpression(Object s, TypeSpec<T> spec) throws ParseException, ConnectException {
     String str = s.toString();
     Result r = sendExpression(str);
-    if (r.err != "")
+    if (!r.err.isEmpty()) {
       throw new ParseException("Expression " + str + " returned an error: " + r.err);
+    }
     try {
       return OMCStringParser.parse(r.res, spec);
     } catch (ParseException ex) {

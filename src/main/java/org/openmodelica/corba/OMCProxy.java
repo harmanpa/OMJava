@@ -47,6 +47,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.omg.CORBA.ORB;
 
 /**
@@ -93,10 +97,7 @@ public class OMCProxy
 
   public OMCProxy(String corbaSessionName)
   {
-    this.corbaSessionName = corbaSessionName;
-    this.traceOMCCalls = true;
-    this.traceOMCStatus = false;
-    this.grammarSyntax = "Modelica";
+    this(corbaSessionName, "Modelica", true, false);
   }
 
 
@@ -472,23 +473,21 @@ public class OMCProxy
 
     hasInitialized = true;
   }
-
+  static final Pattern LOGPATTERN = Pattern.compile("(\\[.*\\]\\s*)?([^\\r\\n]+)");
   /**
    * Send expression to OMC. If communication is not initialized, it
    * is initialized here.
    * @param exp the expression to send to OMC
+     * @return 
    * @throws ConnectException if we're unable to start communicating with
    * the server
    */
-  // TODO add synchronization so that two threads don't fudge up each others
-  // communication with OMC
-  // old synchronization aka 'private synchronized String sendExpression(String exp)'
-  // doesnt work when there is possibility of multiple instances of OMCProxy objects
   public Result sendExpression(String exp)
   throws ConnectException
   {
     String retval = null;
-    String error = null;
+    String error = "";
+    String log = "";
 
     if(hasInitialized == false)
     {
@@ -499,10 +498,28 @@ public class OMCProxy
     {
       logOMCCall(exp);
       retval = omcc.sendExpression(exp);
-      error = omcc.sendExpression("getErrorString()").trim();
-      if (error.equals("\"\"")) error = "";
+      String omcerror = omcc.sendExpression("getErrorString()").trim();
+      if(!omcerror.isEmpty()) {
+          // Also trim leading and trailing "
+          if(omcerror.charAt(0)=='"') {
+              omcerror = omcerror.substring(1);
+          }
+          if(omcerror.charAt(omcerror.length()-1)=='"') {
+              omcerror = omcerror.substring(0, omcerror.length()-1);
+          }
+          // Split into individual outputs
+          Matcher matcher = LOGPATTERN.matcher(omcerror);
+          while(matcher.find()) {
+              String line = matcher.group(2);
+              if(line.startsWith("Warning: ")) {
+                  log = (log.isEmpty()?log:log+"\n") + line;
+              } else {
+                  error = (error.isEmpty()?error:error+"\n") + line;
+              }
+          }
+      }
       logOMCReply(retval);
-      logOMCReply(error);
+      logOMCReply(omcerror);
     }
     catch(org.omg.CORBA.COMM_FAILURE x)
     {
@@ -512,7 +529,7 @@ public class OMCProxy
           "OpenModelica Compiler. Tried sending: " + exp,x);
     }
 
-    return new Result(retval,error);
+    return new Result(retval,log,error);
   }
 
   /**
@@ -588,8 +605,6 @@ public class OMCProxy
    * inside the class named className.
    *
    * @throws ConnectException
-   * @throws UnexpectedReplyException
-   * @throws InitializationException
    */
   public Result getClassNames(String className) throws ConnectException
   {
@@ -615,8 +630,6 @@ public class OMCProxy
    * @return a <code>ParseResult</code> containing the classes found in the
    * file and the error messages from OMC
    * @throws ConnectException
-   * @throws UnexpectedReplyException
-   * @throws InitializationException
    */
   public Result loadSourceFile(String file) throws ConnectException
   {
@@ -653,7 +666,7 @@ public class OMCProxy
      * /foo/Modelica/package.mo,writable,1,1,1029,13
      */
 
-    return new Result("{" + retval.res.trim() +"}","");
+    return new Result("{" + retval.res.trim() +"}","","");
   }
 
   /**
@@ -676,6 +689,8 @@ public class OMCProxy
    * @param className the fully qualified name of a class
    * @return a <code>Collection</code> (of <code>ElementsInfo</code>)
    * containing the information about className
+     * @throws org.openmodelica.corba.ConnectException
+     * @throws org.openmodelica.corba.InvocationError
    */
   public Result getElements(String className)	throws ConnectException, InvocationError
   {
@@ -701,6 +716,7 @@ public class OMCProxy
    * Loads in the Modelica System Library and returns names of the top-level
    * packages.
    *
+     * @return 
    * @throws ConnectException if we're unable to start communicating with
    * the server
    */
